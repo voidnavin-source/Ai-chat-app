@@ -11,7 +11,7 @@ HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI Chat App - Streaming</title>
+    <title>AI Chat Assistant - Streaming</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
         textarea { width: 100%; height: 100px; padding: 10px; margin-bottom: 10px; }
