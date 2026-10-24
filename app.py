@@ -12,33 +12,47 @@ HTML_TEMPLATE = """
 <html>
 <head>
     <title>AI Chat Assistant - Streaming</title>
+    
+    <!-- Marked.js for Markdown Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Highlight.js for Beautiful Code Syntax Highlighting (Dark Theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
-        textarea { width: 100%; height: 100px; padding: 10px; margin-bottom: 5px; }
+        body { font-family: Arial, sans-serif; max-width: 650px; margin: 40px auto; padding: 20px; background: #fdfdfd; }
+        textarea { width: 100%; height: 90px; padding: 10px; margin-bottom: 5px; border-radius: 4px; border: 1px solid #ccc; font-family: inherit; }
         .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
         button.clear-btn { background: #6c757d; }
         button:hover { opacity: 0.9; }
-        .response { background: #f4f4f4; padding: 15px; margin-top: 20px; border-left: 4px solid #007bff; white-space: pre-wrap; }
+        
+        .response { background: #ffffff; padding: 20px; margin-top: 20px; border-left: 4px solid #007bff; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); line-height: 1.6; }
         
         /* Quick Prompt Buttons Style */
         .quick-prompts { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-        .quick-btn { background: #e9ecef; color: #333; border: 1px solid #ced4da; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .quick-btn { background: #e9ecef; color: #333; border: 1px solid #ced4da; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: normal; }
         .quick-btn:hover { background: #dde2e6; }
         
         /* Typing Indicator Effect */
         .thinking { color: #888; font-style: italic; }
+
+        /* Code block styling adjustments */
+        pre { background: #282c34; padding: 15px; border-radius: 6px; overflow-x: auto; }
+        code { font-family: 'Courier New', Courier, monospace; }
+        p code { background: #f1f3f5; padding: 2px 6px; border-radius: 4px; color: #d63384; }
     </style>
 </head>
 <body>
-    <h2>Gemini Flask Chat App (Streaming)</h2>
+    <h2>Gemini Flask Chat App (Pro Edition)</h2>
     <form id="chat-form">
-        <textarea id="prompt" name="prompt" placeholder="Ask something..."></textarea>
+        <textarea id="prompt" name="prompt" placeholder="Ask something or write code..."></textarea>
         
         <!-- Quick-Prompt Buttons -->
         <div class="quick-prompts">
+            <button type="button" class="quick-btn" onclick="setPrompt('Write a Java method for binary search')">☕ Java Binary Search</button>
             <button type="button" class="quick-btn" onclick="setPrompt('Explain Python in 1 line')">🐍 Python in 1 line</button>
-            <button type="button" class="quick-btn" onclick="setPrompt('Write a simple Java method')">☕ Java Method</button>
             <button type="button" class="quick-btn" onclick="setPrompt('Tell me a funny coding joke')">😄 Coding Joke</button>
         </div>
 
@@ -48,7 +62,10 @@ HTML_TEMPLATE = """
         </div>
     </form>
     
-    <div class="response" id="response-box"><strong>AI Response:</strong><p id="output"></p></div>
+    <div class="response" id="response-box">
+        <strong>AI Response:</strong>
+        <div id="output" style="margin-top: 10px;"></div>
+    </div>
 
     <script>
         // Function to fill prompt text automatically
@@ -59,7 +76,7 @@ HTML_TEMPLATE = """
         // Function to clear chat box and input
         function clearChat() {
             document.getElementById('prompt').value = '';
-            document.getElementById('output').textContent = '';
+            document.getElementById('output').innerHTML = '';
         }
 
         const form = document.getElementById('chat-form');
@@ -86,14 +103,21 @@ HTML_TEMPLATE = """
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 
-                // Reset styling for actual response
                 output.className = "";
-                output.textContent = "";
+                let fullResponse = "";
 
                 while (true) {
                     const { value, done } = await reader.read();
                     if (done) break;
-                    output.textContent += decoder.decode(value, { stream: true });
+                    fullResponse += decoder.decode(value, { stream: true });
+                    
+                    // Live Markdown Rendering as it streams
+                    output.innerHTML = marked.parse(fullResponse);
+                    
+                    // Apply Code Highlighting to code blocks
+                    document.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
                 }
             } catch (err) {
                 output.className = "";
@@ -124,13 +148,3 @@ def generate():
                 if chunk.text:
                     yield chunk.text
         except Exception as e:
-            error_str = str(e)
-            if "503" in error_str or "unavailable" in error_str.lower() or "ResourceExhausted" in error_str:
-                yield "AI server par abhi high demand hai. Kripya ek baar refresh karke dobara try karein!"
-            else:
-                yield f"Error: {e}"
-
-    return Response(generate_stream(), mimetype='text/plain')
-
-if __name__ == "__main__":
-    app.run(debug=True)
