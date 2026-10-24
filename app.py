@@ -25,6 +25,9 @@ HTML_TEMPLATE = """
         .quick-prompts { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
         .quick-btn { background: #e9ecef; color: #333; border: 1px solid #ced4da; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
         .quick-btn:hover { background: #dde2e6; }
+        
+        /* Typing Indicator Effect */
+        .thinking { color: #888; font-style: italic; }
     </style>
 </head>
 <body>
@@ -40,7 +43,7 @@ HTML_TEMPLATE = """
         </div>
 
         <div class="btn-group">
-            <button type="submit">Send to AI</button>
+            <button type="submit" id="send-btn">Send to AI</button>
             <button type="button" class="clear-btn" onclick="clearChat()">Clear Chat</button>
         </div>
     </form>
@@ -61,27 +64,42 @@ HTML_TEMPLATE = """
 
         const form = document.getElementById('chat-form');
         const output = document.getElementById('output');
+        const sendBtn = document.getElementById('send-btn');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const promptText = document.getElementById('prompt').value;
             if (!promptText.trim()) return;
-            output.textContent = "Thinking...";
 
-            const response = await fetch('/generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'prompt=' + encodeURIComponent(promptText)
-            });
+            // Show Typing Indicator
+            output.className = "thinking";
+            output.textContent = "AI is thinking...";
+            sendBtn.disabled = true;
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            output.textContent = "";
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'prompt=' + encodeURIComponent(promptText)
+                });
 
-            while (true) {
-                const { value, done } = await reader.read();
-                if (done) break;
-                output.textContent += decoder.decode(value, { stream: true });
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                
+                // Reset styling for actual response
+                output.className = "";
+                output.textContent = "";
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    output.textContent += decoder.decode(value, { stream: true });
+                }
+            } catch (err) {
+                output.className = "";
+                output.textContent = "Error connecting to server.";
+            } finally {
+                sendBtn.disabled = false;
             }
         });
     </script>
