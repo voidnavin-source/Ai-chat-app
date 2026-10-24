@@ -67,7 +67,7 @@ def generate():
     def generate_stream():
         try:
             response = client.models.generate_content_stream(
-                model="gemini-3.8-flash",
+                model="gemini-2.5-flash",
                 contents=user_prompt,
             )
             for chunk in response:
