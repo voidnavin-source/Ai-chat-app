@@ -93,7 +93,11 @@ def generate():
                 if chunk.text:
                     yield chunk.text
         except Exception as e:
-            yield f"Error: {e}"
+            error_str = str(e)
+            if "503" in error_str or "unavailable" in error_str.lower() or "ResourceExhausted" in error_str:
+                yield "AI server par abhi high demand hai. Kripya ek baar refresh karke dobara try karein!"
+            else:
+                yield f"Error: {e}"
 
     return Response(generate_stream(), mimetype='text/plain')
 
