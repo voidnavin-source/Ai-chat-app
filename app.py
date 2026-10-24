@@ -15,7 +15,10 @@ HTML_TEMPLATE = """
     <style>
         body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
         textarea { width: 100%; height: 100px; padding: 10px; margin-bottom: 5px; }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button.clear-btn { background: #6c757d; }
+        button:hover { opacity: 0.9; }
         .response { background: #f4f4f4; padding: 15px; margin-top: 20px; border-left: 4px solid #007bff; white-space: pre-wrap; }
         
         /* Quick Prompt Buttons Style */
@@ -29,21 +32,31 @@ HTML_TEMPLATE = """
     <form id="chat-form">
         <textarea id="prompt" name="prompt" placeholder="Ask something..."></textarea>
         
-        <!-- Quick-Prompt Buttons Added Here -->
+        <!-- Quick-Prompt Buttons -->
         <div class="quick-prompts">
             <button type="button" class="quick-btn" onclick="setPrompt('Explain Python in 1 line')">🐍 Python in 1 line</button>
             <button type="button" class="quick-btn" onclick="setPrompt('Write a simple Java method')">☕ Java Method</button>
             <button type="button" class="quick-btn" onclick="setPrompt('Tell me a funny coding joke')">😄 Coding Joke</button>
         </div>
 
-        <button type="submit">Send to AI</button>
+        <div class="btn-group">
+            <button type="submit">Send to AI</button>
+            <button type="button" class="clear-btn" onclick="clearChat()">Clear Chat</button>
+        </div>
     </form>
+    
     <div class="response" id="response-box"><strong>AI Response:</strong><p id="output"></p></div>
 
     <script>
         // Function to fill prompt text automatically
         function setPrompt(text) {
             document.getElementById('prompt').value = text;
+        }
+
+        // Function to clear chat box and input
+        function clearChat() {
+            document.getElementById('prompt').value = '';
+            document.getElementById('output').textContent = '';
         }
 
         const form = document.getElementById('chat-form');
