@@ -15,349 +15,343 @@ HTML_TEMPLATE = """
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevFlow AI - Personal Assistant</title>
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     
     <!-- Marked.js & Highlight.js -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <style>
         :root {
-            --bg-main: #0b0f17;
-            --bg-card: #121824;
-            --bg-input: #1b2234;
-            --border-subtle: #242f46;
-            --accent-primary: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-            --user-bubble: #1e293b;
-            --ai-bubble: #111827;
+            --bg-page: #0d1117;
+            --bg-input-container: #161b22;
+            --border-line: #30363d;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-blue: #2f81f7;
+            --user-bubble-bg: #1f2937;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-primary);
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-
-        .chat-app {
-            width: 100%;
-            max-width: 900px;
-            height: 94vh;
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        /* Top Header */
-        .chat-header {
-            padding: 18px 26px;
-            border-bottom: 1px solid var(--border-subtle);
+        /* Top Sticky Header */
+        header {
+            width: 100%;
+            height: 56px;
+            padding: 0 24px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            background: rgba(18, 24, 36, 0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(13, 17, 23, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-line);
+            z-index: 10;
         }
 
-        .header-title {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .badge-status {
-            width: 9px;
-            height: 9px;
-            background-color: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #10b981;
-        }
-
-        .header-title h1 {
-            font-size: 17px;
+            gap: 10px;
+            font-size: 16px;
             font-weight: 600;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.2px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #238636;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #238636;
         }
 
         .clear-btn {
             background: transparent;
-            border: 1px solid var(--border-subtle);
-            color: var(--text-muted);
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
+            border: 1px solid var(--border-line);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
             font-size: 13px;
-            font-weight: 500;
+            cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .clear-btn:hover {
-            color: #ef4444;
-            border-color: #ef4444;
-            background: rgba(239, 68, 68, 0.08);
+            color: #f85149;
+            border-color: #f85149;
+            background: rgba(248, 81, 73, 0.1);
         }
 
-        /* Chat Conversation Area */
-        .chat-body {
+        /* Full Screen Scrollable Chat Container */
+        .chat-scroll-area {
             flex: 1;
-            padding: 24px 28px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
             scroll-behavior: smooth;
+            padding: 30px 16px 140px 16px;
         }
 
-        .chat-body::-webkit-scrollbar {
-            width: 6px;
+        .chat-scroll-area::-webkit-scrollbar {
+            width: 8px;
         }
-        .chat-body::-webkit-scrollbar-thumb {
-            background: var(--border-subtle);
+        .chat-scroll-area::-webkit-scrollbar-thumb {
+            background: #21262d;
             border-radius: 4px;
         }
 
-        .message-row {
+        .conversation-wrapper {
+            max-width: 768px;
+            margin: 0 auto;
             display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .message-block {
+            display: flex;
+            flex-direction: column;
             width: 100%;
         }
 
-        .message-row.user-row { justify-content: flex-end; }
-        .message-row.ai-row { justify-content: flex-start; }
+        .message-header {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        .message-bubble {
-            max-width: 82%;
-            padding: 14px 18px;
-            border-radius: 14px;
-            font-size: 14.5px;
-            line-height: 1.6;
+        .user-block .message-header { color: #58a6ff; justify-content: flex-end; }
+        .ai-block .message-header { color: #7ee787; }
+
+        .bubble-content {
+            font-size: 15px;
+            line-height: 1.65;
             word-wrap: break-word;
         }
 
-        .user-bubble {
-            background: var(--user-bubble);
+        .user-block {
+            align-items: flex-end;
+        }
+
+        .user-block .bubble-content {
+            background: var(--user-bubble-bg);
+            padding: 12px 18px;
+            border-radius: 18px 18px 4px 18px;
+            max-width: 85%;
+            border: 1px solid #374151;
             color: #ffffff;
-            border: 1px solid #334155;
-            border-bottom-right-radius: 4px;
         }
 
-        .ai-bubble {
-            background: var(--ai-bubble);
-            color: #cbd5e1;
-            border: 1px solid var(--border-subtle);
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        .ai-block {
+            align-items: flex-start;
+        }
+
+        .ai-block .bubble-content {
             width: 100%;
+            color: #c9d1d9;
         }
 
-        .sender-tag {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        /* Markdown and Pre formatting */
+        .ai-block p { margin-bottom: 12px; }
+        .ai-block p:last-child { margin-bottom: 0; }
+        .ai-block ul, .ai-block ol { margin: 8px 0 14px 24px; }
+        .ai-block li { margin-bottom: 6px; }
 
-        .user-tag { color: #60a5fa; justify-content: flex-end; }
-        .ai-tag { color: #38bdf8; }
-
-        .thinking-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-muted);
-            font-size: 13.5px;
-            font-style: italic;
-        }
-
-        /* Markdown & Code Customization */
-        .ai-bubble p { margin-bottom: 10px; }
-        .ai-bubble p:last-child { margin-bottom: 0; }
-        .ai-bubble ul, .ai-bubble ol { margin: 8px 0 12px 20px; }
-        .ai-bubble li { margin-bottom: 4px; }
-        
         pre {
-            background: #090d16 !important;
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
-            padding: 14px;
-            margin: 12px 0;
+            background: #161b22 !important;
+            border: 1px solid var(--border-line);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 14px 0;
             overflow-x: auto;
         }
 
         code {
             font-family: 'Fira Code', monospace;
-            font-size: 13px;
+            font-size: 13.5px;
         }
 
         p code {
-            background: #1e2638;
-            color: #38bdf8;
-            padding: 2px 6px;
-            border-radius: 5px;
-            font-size: 13px;
+            background: #21262d;
+            color: #79c0ff;
+            padding: 3px 6px;
+            border-radius: 4px;
         }
 
-        /* Footer / Input Area */
-        .chat-footer {
-            padding: 16px 24px 20px;
-            border-top: 1px solid var(--border-subtle);
-            background: var(--bg-card);
+        .thinking-indicator {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Bottom Floating Input Bar */
+        .input-dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(180deg, rgba(13, 17, 23, 0) 0%, rgba(13, 17, 23, 0.9) 25%, #0d1117 100%);
+            padding: 0 16px 20px 16px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .dock-container {
+            width: 100%;
+            max-width: 768px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .quick-chips {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 4px;
         }
 
-        .chip-btn {
-            background: var(--bg-input);
-            color: var(--text-muted);
-            border: 1px solid var(--border-subtle);
-            padding: 6px 12px;
-            border-radius: 20px;
+        .chip {
+            background: rgba(22, 27, 34, 0.8);
+            border: 1px solid var(--border-line);
+            color: var(--text-secondary);
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 12px;
             cursor: pointer;
-            font-size: 12.5px;
-            font-weight: 500;
             transition: all 0.2s ease;
         }
 
-        .chip-btn:hover {
-            color: var(--text-main);
-            border-color: var(--accent-primary);
-            background: rgba(59, 130, 246, 0.12);
+        .chip:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+            background: #161b22;
         }
 
-        .input-bar {
+        .input-box {
+            background: var(--bg-input-container);
+            border: 1px solid var(--border-line);
+            border-radius: 14px;
             display: flex;
             align-items: flex-end;
-            background: var(--bg-input);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            padding: 8px 12px;
+            padding: 10px 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .input-bar:focus-within {
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        .input-box:focus-within {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(47, 129, 247, 0.25);
         }
 
         textarea {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-main);
+            color: var(--text-primary);
             font-family: inherit;
-            font-size: 14px;
-            resize: none;
+            font-size: 14.5px;
+            line-height: 22px;
+            max-height: 140px;
             height: 24px;
-            max-height: 120px;
+            resize: none;
             outline: none;
-            padding: 4px 6px;
-            line-height: 20px;
+            padding: 2px 8px 2px 0;
         }
 
-        textarea::placeholder { color: #64748b; }
+        textarea::placeholder { color: #6e7681; }
 
         .send-btn {
-            background: var(--accent-primary);
-            color: #ffffff;
+            background: var(--accent-blue);
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
+            color: white;
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: background 0.2s ease, transform 0.1s ease;
+            transition: opacity 0.2s ease;
             flex-shrink: 0;
         }
 
-        .send-btn:hover { background: var(--accent-hover); }
-        .send-btn:active { transform: scale(0.95); }
-        .send-btn:disabled { background: #334155; cursor: not-allowed; opacity: 0.6; }
-        .send-btn svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; }
+        .send-btn:disabled {
+            background: #21262d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .send-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; }
     </style>
 </head>
 <body>
 
-    <div class="chat-app">
-        <!-- Top App Bar -->
-        <header class="chat-header">
-            <div class="header-title">
-                <span class="badge-status"></span>
-                <h1>DevFlow Assistant</h1>
-            </div>
-            <form action="/clear" method="POST" style="margin: 0;">
-                <button type="submit" class="clear-btn">Clear Session</button>
-            </form>
-        </header>
+    <header>
+        <div class="brand">
+            <span class="status-dot"></span>
+            <span>DevFlow AI</span>
+        </div>
+        <form action="/clear" method="POST" style="margin: 0;">
+            <button type="submit" class="clear-btn">Clear Chat</button>
+        </form>
+    </header>
 
-        <!-- Dynamic Chat Conversation -->
-        <div class="chat-body" id="chat-body">
+    <div class="chat-scroll-area" id="scroll-area">
+        <div class="conversation-wrapper" id="conversation-container">
             {% if not history %}
-                <div class="message-row ai-row">
-                    <div class="message-bubble ai-bubble">
-                        <div class="sender-tag ai-tag">Assistant</div>
-                        <p>Welcome! I'm your context-aware virtual assistant. Ask me to design architecture, debug code, or solve algorithmic problems.</p>
+                <div class="message-block ai-block">
+                    <div class="message-header">DevFlow AI</div>
+                    <div class="bubble-content">
+                        <p>Namaste! Main aapka AI personal assistant hoon. Coding, architecture design, ya koi bhi complex sawal poocho — baatcheet full screen par smoothly scroll hogi.</p>
                     </div>
                 </div>
             {% endif %}
 
             {% for message in history %}
                 {% if message.role == 'user' %}
-                    <div class="message-row user-row">
-                        <div class="message-bubble user-bubble">
-                            <div class="sender-tag user-tag">You</div>
-                            <div>{{ message.text }}</div>
-                        </div>
+                    <div class="message-block user-block">
+                        <div class="message-header">You</div>
+                        <div class="bubble-content">{{ message.text }}</div>
                     </div>
                 {% else %}
-                    <div class="message-row ai-row">
-                        <div class="message-bubble ai-bubble">
-                            <div class="sender-tag ai-tag">Assistant</div>
-                            <div class="rendered-content">{{ message.text }}</div>
-                        </div>
+                    <div class="message-block ai-block">
+                        <div class="message-header">DevFlow AI</div>
+                        <div class="bubble-content rendered-content">{{ message.text }}</div>
                     </div>
                 {% endif %}
             {% endfor %}
         </div>
+    </div>
 
-        <!-- Interactive Footer -->
-        <footer class="chat-footer">
+    <div class="input-dock">
+        <div class="dock-container">
             <div class="quick-chips">
-                <button type="button" class="chip-btn" onclick="setPrompt('Write a Java method for binary search')">☕ Java Binary Search</button>
-                <button type="button" class="chip-btn" onclick="setPrompt('Design an LRU Cache with O(1) operations')">⚡ LRU Cache Design</button>
-                <button type="button" class="chip-btn" onclick="setPrompt('Explain microservices vs monolithic architecture in 2 lines')">🏢 System Architecture</button>
+                <button type="button" class="chip" onclick="setPrompt('Write a clean Java solution for LRU Cache with O(1) time complexity')">☕ LRU Cache (Java)</button>
+                <button type="button" class="chip" onclick="setPrompt('Design a high-scale real-time notification engine with Kafka and Redis')">⚡ Notification Architecture</button>
+                <button type="button" class="chip" onclick="setPrompt('Explain difference between TCP and UDP with simple analogies')">🌐 TCP vs UDP</button>
             </div>
 
-            <form id="chat-form" class="input-bar">
-                <textarea id="prompt" name="prompt" rows="1" placeholder="Type your query or instruction..."></textarea>
+            <form id="chat-form" class="input-box">
+                <textarea id="prompt" name="prompt" rows="1" placeholder="Message DevFlow AI..."></textarea>
                 <button type="submit" id="send-btn" class="send-btn" aria-label="Send">
                     <svg viewBox="0 0 24 24">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -365,38 +359,39 @@ HTML_TEMPLATE = """
                     </svg>
                 </button>
             </form>
-        </footer>
+        </div>
     </div>
 
     <script>
-        const chatBody = document.getElementById('chat-body');
+        const scrollArea = document.getElementById('scroll-area');
+        const container = document.getElementById('conversation-container');
         const promptInput = document.getElementById('prompt');
         const form = document.getElementById('chat-form');
         const sendBtn = document.getElementById('send-btn');
 
-        chatBody.scrollTop = chatBody.scrollHeight;
+        function scrollToBottom() {
+            scrollArea.scrollTop = scrollArea.scrollHeight;
+        }
+        scrollToBottom();
 
-        // Auto-render any existing markdown messages
+        // Render previous markdown history
         document.querySelectorAll('.rendered-content').forEach((el) => {
             el.innerHTML = marked.parse(el.textContent);
             el.querySelectorAll('pre code').forEach((block) => hljs.highlightElement(block));
         });
 
-        // Quick prompt setter
         function setPrompt(text) {
             promptInput.value = text;
             promptInput.focus();
-            autoResizeTextarea();
+            autoResize();
         }
 
-        // Auto resize textarea height
-        promptInput.addEventListener('input', autoResizeTextarea);
-        function autoResizeTextarea() {
+        promptInput.addEventListener('input', autoResize);
+        function autoResize() {
             promptInput.style.height = 'auto';
-            promptInput.style.height = (promptInput.scrollHeight < 120 ? promptInput.scrollHeight : 120) + 'px';
+            promptInput.style.height = Math.min(promptInput.scrollHeight, 140) + 'px';
         }
 
-        // Handle Enter key for submit (Shift+Enter for new line)
         promptInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -406,44 +401,40 @@ HTML_TEMPLATE = """
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const promptText = promptInput.value.trim();
-            if (!promptText) return;
+            const text = promptInput.value.trim();
+            if (!text) return;
 
-            // 1. Add User Bubble
-            const userRow = document.createElement('div');
-            userRow.className = 'message-row user-row';
-            userRow.innerHTML = `
-                <div class="message-bubble user-bubble">
-                    <div class="sender-tag user-tag">You</div>
-                    <div>${escapeHtml(promptText)}</div>
-                </div>
+            // 1. Append User Message
+            const userBlock = document.createElement('div');
+            userBlock.className = 'message-block user-block';
+            userBlock.innerHTML = `
+                <div class="message-header">You</div>
+                <div class="bubble-content">${escapeHtml(text)}</div>
             `;
-            chatBody.appendChild(userRow);
+            container.appendChild(userBlock);
 
             promptInput.value = '';
             promptInput.style.height = '24px';
-            chatBody.scrollTop = chatBody.scrollHeight;
+            scrollToBottom();
 
-            // 2. Add AI Placeholder Bubble
-            const aiRow = document.createElement('div');
-            aiRow.className = 'message-row ai-row';
-            aiRow.innerHTML = `
-                <div class="message-bubble ai-bubble">
-                    <div class="sender-tag ai-tag">Assistant</div>
-                    <div class="ai-stream-content"><span class="thinking-indicator">Assistant is thinking...</span></div>
-                </div>
+            // 2. Append AI Streaming Placeholder
+            const aiBlock = document.createElement('div');
+            aiBlock.className = 'message-block ai-block';
+            aiBlock.innerHTML = `
+                <div class="message-header">DevFlow AI</div>
+                <div class="bubble-content ai-stream"><span class="thinking-indicator">DevFlow is thinking...</span></div>
             `;
-            chatBody.appendChild(aiRow);
-            chatBody.scrollTop = chatBody.scrollHeight;
+            container.appendChild(aiBlock);
+            scrollToBottom();
 
-            const streamContent = aiRow.querySelector('.ai-stream-content');
+            const streamBox = aiBlock.querySelector('.ai-stream');
             sendBtn.disabled = true;
 
             try {
                 const response = await fetch('/generate', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: 'prompt=' + encodeURIComponent(promptText)
+                    body: 'prompt=' + encodeURIComponent(text)
                 });
 
                 const reader = response.body.getReader();
@@ -455,27 +446,27 @@ HTML_TEMPLATE = """
                     if (done) break;
                     fullResponse += decoder.decode(value, { stream: true });
                     
-                    streamContent.innerHTML = marked.parse(fullResponse);
-                    streamContent.querySelectorAll('pre code').forEach((block) => hljs.highlightElement(block));
-                    chatBody.scrollTop = chatBody.scrollHeight;
+                    streamBox.innerHTML = marked.parse(fullResponse);
+                    streamBox.querySelectorAll('pre code').forEach((b) => hljs.highlightElement(b));
+                    scrollToBottom();
                 }
 
-                // Decoupled session persistence
+                // Background session persistence
                 await fetch('/save_message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_prompt: promptText, ai_response: fullResponse })
+                    body: JSON.stringify({ user_prompt: text, ai_response: fullResponse })
                 });
 
             } catch (err) {
-                streamContent.innerHTML = `<span style="color:#ef4444;">Error connecting to the service. Please retry.</span>`;
+                streamBox.innerHTML = `<span style="color:#f85149;">Connection error. Please try again.</span>`;
             } finally {
                 sendBtn.disabled = false;
             }
         });
 
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
     </script>
 </body>
@@ -514,7 +505,7 @@ def generate():
         except Exception as e:
             error_str = str(e)
             if "503" in error_str or "unavailable" in error_str.lower() or "ResourceExhausted" in error_str:
-                yield "AI server is experiencing high traffic. Please retry in a moment."
+                yield "Server under high load. Please retry in a few seconds."
             else:
                 yield f"Error: {e}"
 
