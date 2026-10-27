@@ -50,92 +50,119 @@ AUTH_TEMPLATE = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevFlow AI - Workspace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-page: #0f0f12;
+            --bg-card: #18181b;
+            --border-subtle: #27272a;
+            --accent: #2dd4bf;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #090d16;
-            color: #f1f5f9;
+            background-color: var(--bg-page);
+            background-image: radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.05) 0%, transparent 60%);
+            color: var(--text-main);
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .auth-container {
+        .auth-card {
             width: 100%;
-            max-width: 380px;
-            padding: 36px 30px;
-            background: #111726;
-            border: 1px solid #1e293b;
-            border-radius: 18px;
-            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6);
+            max-width: 400px;
+            padding: 40px 32px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
         }
         .auth-logo {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 700;
-            color: #38bdf8;
+            color: var(--accent);
+            letter-spacing: -0.4px;
             margin-bottom: 6px;
         }
         .auth-sub {
             text-align: center;
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 24px;
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 26px;
         }
-        .input-group { margin-bottom: 16px; }
-        label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group { margin-bottom: 18px; }
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
         input {
             width: 100%;
-            background: #090d16;
-            border: 1px solid #1e293b;
+            background: #121215;
+            border: 1px solid var(--border-subtle);
             border-radius: 10px;
-            padding: 11px 14px;
+            padding: 12px 14px;
             color: #fff;
             font-size: 14px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s ease;
         }
-        input:focus { border-color: #38bdf8; }
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+        }
         button {
             width: 100%;
-            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
-            color: #fff;
+            background: var(--accent);
+            color: #09090b;
             border: none;
             padding: 12px;
             border-radius: 10px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 14.5px;
             cursor: pointer;
             margin-top: 10px;
-            transition: opacity 0.2s;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(45, 212, 191, 0.2);
         }
-        button:hover { opacity: 0.92; }
+        button:hover {
+            opacity: 0.94;
+            transform: translateY(-1px);
+        }
         .switch-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 22px;
             font-size: 13px;
-            color: #94a3b8;
+            color: var(--text-muted);
         }
-        .switch-link a { color: #38bdf8; text-decoration: none; font-weight: 600; }
+        .switch-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
         .error-msg {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
             color: #fca5a5;
-            padding: 9px 12px;
-            border-radius: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
             font-size: 13px;
-            margin-bottom: 16px;
+            margin-bottom: 18px;
             text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
+    <div class="auth-card">
         <div class="auth-logo">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
             DevFlow AI
@@ -160,9 +187,9 @@ AUTH_TEMPLATE = """
 
         <div class="switch-link">
             {% if is_login %}
-                New developer? <a href="/register">Sign Up</a>
+                Need an account? <a href="/register">Sign Up</a>
             {% else %}
-                Already have account? <a href="/login">Sign In</a>
+                Already registered? <a href="/login">Sign In</a>
             {% endif %}
         </div>
     </div>
@@ -176,119 +203,140 @@ APP_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevFlow AI Workspace</title>
+    <title>DevFlow AI - Personal Assistant</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <style>
         :root {
-            --bg-base: #080b11;
-            --bg-surface: #0f1420;
-            --bg-glass: rgba(15, 20, 32, 0.85);
-            --border: #1e2638;
-            --border-hover: #334155;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --accent: #38bdf8;
-            --accent-glow: rgba(56, 189, 248, 0.2);
-            --user-bg: #1a2234;
-            --alarm-red: #ef4444;
+            --bg-canvas: #0e0e11;
+            --bg-sidebar: #131317;
+            --bg-panel: #18181c;
+            --bg-input: #1e1e24;
+            --border: #26262b;
+            --border-hover: #3a3a42;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #71717a;
+            --accent: #2dd4bf;
+            --accent-soft: rgba(45, 212, 191, 0.12);
+            --user-bubble: #1c2333;
+            --user-bubble-border: #29354d;
+            --danger: #f43f5e;
+            --danger-soft: rgba(244, 63, 94, 0.1);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-base);
-            color: var(--text-main);
+            background-color: var(--bg-canvas);
+            color: var(--text-primary);
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* Glassmorphism Header */
         header {
-            height: 56px;
+            height: 60px;
             padding: 0 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
+            background: rgba(14, 14, 17, 0.85);
+            backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
-            z-index: 20;
+            z-index: 30;
         }
 
-        .brand-container {
+        .header-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
-        .brand-logo {
+        .brand-badge {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 16px;
+            font-size: 15.5px;
             font-weight: 700;
             color: #fff;
             letter-spacing: -0.3px;
         }
 
-        .brand-logo svg { color: var(--accent); }
+        .brand-badge svg { color: var(--accent); }
 
-        .persona-badge {
-            background: rgba(56, 189, 248, 0.1);
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            border-radius: 8px;
-            padding: 2px 8px;
+        .persona-container {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 3px 10px;
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: border-color 0.2s ease;
+        }
+
+        .persona-container:hover { border-color: var(--border-hover); }
+
+        .persona-dot {
+            width: 7px;
+            height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent);
         }
 
         .persona-select {
             background: transparent;
             border: none;
-            color: var(--accent);
+            color: var(--text-secondary);
             font-size: 12px;
             font-weight: 600;
             outline: none;
             cursor: pointer;
+            font-family: inherit;
         }
 
         .persona-select option {
-            background: var(--bg-surface);
-            color: var(--text-main);
+            background: var(--bg-panel);
+            color: var(--text-primary);
         }
 
-        .header-controls {
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .user-tag {
-            font-size: 13px;
-            color: var(--text-sub);
-            margin-right: 6px;
-        }
-        .user-tag span { color: #fff; font-weight: 600; }
-
-        .btn-action {
-            background: #151c2c;
+        .user-pill {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            background: var(--bg-panel);
             border: 1px solid var(--border);
-            color: var(--text-sub);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+        .user-pill strong { color: var(--text-primary); font-weight: 600; }
+
+        .header-btn {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
             padding: 6px 12px;
             border-radius: 8px;
-            font-size: 12.5px;
-            font-weight: 500;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
@@ -297,80 +345,105 @@ APP_TEMPLATE = """
             transition: all 0.2s ease;
         }
 
-        .btn-action:hover {
-            color: var(--text-main);
+        .header-btn:hover {
+            color: var(--text-primary);
             border-color: var(--border-hover);
-            background: #1e2638;
+            background: #202026;
         }
 
-        .btn-danger:hover {
-            color: var(--alarm-red);
-            border-color: rgba(239, 68, 68, 0.4);
-            background: rgba(239, 68, 68, 0.1);
+        .header-btn-danger:hover {
+            color: var(--danger);
+            border-color: rgba(244, 63, 94, 0.4);
+            background: var(--danger-soft);
         }
 
+        /* Workspace Core Layout */
         .workspace {
             display: flex;
             flex: 1;
-            height: calc(100vh - 56px);
+            height: calc(100vh - 60px);
             overflow: hidden;
         }
 
+        /* Elevated Left Sidebar */
         aside {
-            width: 280px;
-            background: var(--bg-surface);
+            width: 290px;
+            background: var(--bg-sidebar);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 16px;
-            gap: 16px;
+            padding: 20px 16px;
+            gap: 18px;
         }
 
-        .sidebar-header {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: var(--text-sub);
+        .sidebar-title-bar {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .alarm-form {
+        .sidebar-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-tertiary);
+        }
+
+        .counter-badge {
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 12px;
+        }
+
+        .task-input-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            background: #151c2c;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
         }
 
-        .alarm-form input {
-            background: #0a0e17;
+        .task-input-card input {
+            background: #111114;
             border: 1px solid var(--border);
             color: #fff;
-            padding: 8px 10px;
-            border-radius: 6px;
+            padding: 9px 11px;
+            border-radius: 8px;
             font-size: 12.5px;
             outline: none;
+            transition: all 0.2s ease;
         }
-        .alarm-form input:focus { border-color: var(--accent); }
 
-        .btn-add-alarm {
-            background: #0284c7;
-            color: #fff;
+        .task-input-card input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
+        }
+
+        .btn-set-alarm {
+            background: var(--accent);
+            color: #09090b;
             border: none;
-            padding: 7px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 2px 10px rgba(45, 212, 191, 0.2);
         }
-        .btn-add-alarm:hover { opacity: 0.9; }
 
-        .reminders-list {
+        .btn-set-alarm:hover { opacity: 0.92; }
+
+        .reminders-viewport {
             flex: 1;
             overflow-y: auto;
             display: flex;
@@ -378,205 +451,262 @@ APP_TEMPLATE = """
             gap: 8px;
         }
 
-        .reminder-card {
-            background: #151c2c;
+        .reminders-viewport::-webkit-scrollbar { width: 4px; }
+        .reminders-viewport::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .empty-tasks {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+            gap: 8px;
+            height: 140px;
+            font-size: 12.5px;
+            text-align: center;
+        }
+
+        .empty-tasks svg { opacity: 0.4; }
+
+        .task-item {
+            background: var(--bg-panel);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 10px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: border-color 0.2s ease;
         }
 
-        .reminder-info {
+        .task-item:hover { border-color: var(--border-hover); }
+
+        .task-details {
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
 
-        .reminder-title { font-size: 13px; font-weight: 600; color: #e2e8f0; }
-        .reminder-clock { font-size: 11.5px; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+        .task-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+        .task-timestamp { font-size: 11px; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
 
-        .reminder-del {
+        .task-delete-btn {
             background: transparent;
             border: none;
-            color: var(--text-sub);
+            color: var(--text-tertiary);
             cursor: pointer;
-            font-size: 14px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
         }
-        .reminder-del:hover { color: var(--alarm-red); }
 
+        .task-delete-btn:hover {
+            color: var(--danger);
+            background: var(--danger-soft);
+        }
+
+        /* Main Chat Workspace */
         main {
             flex: 1;
             display: flex;
             flex-direction: column;
             position: relative;
-            background: var(--bg-base);
+            background: var(--bg-canvas);
         }
 
-        .chat-scroll {
+        .chat-scroll-feed {
             flex: 1;
             overflow-y: auto;
             scroll-behavior: smooth;
-            padding: 30px 24px 150px 24px;
+            padding: 32px 24px 170px 24px;
         }
 
-        .chat-scroll::-webkit-scrollbar { width: 6px; }
-        .chat-scroll::-webkit-scrollbar-thumb { background: #1e2638; border-radius: 3px; }
+        .chat-scroll-feed::-webkit-scrollbar { width: 6px; }
+        .chat-scroll-feed::-webkit-scrollbar-thumb { background: #26262b; border-radius: 3px; }
 
-        .feed-container {
+        .messages-container {
             max-width: 820px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 28px;
+            gap: 32px;
         }
 
-        .msg-row {
+        .message-row {
             display: flex;
             flex-direction: column;
             width: 100%;
         }
 
-        .msg-role {
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+        .message-meta {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            font-size: 11.5px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
-        .msg-user .msg-role { color: #60a5fa; justify-content: flex-end; }
-        .msg-ai .msg-role { color: var(--accent); }
-
-        .msg-user { align-items: flex-end; }
-        .msg-user .msg-bubble {
-            background: var(--user-bg);
-            border: 1px solid #2a374f;
-            border-radius: 16px 16px 4px 16px;
-            padding: 12px 18px;
+        .row-user { align-items: flex-end; }
+        .row-user .message-meta { color: #93c5fd; }
+        .row-user .bubble-box {
+            background: var(--user-bubble);
+            border: 1px solid var(--user-bubble-border);
+            border-radius: 18px 18px 4px 18px;
+            padding: 14px 18px;
             max-width: 82%;
             font-size: 14.5px;
             line-height: 1.6;
             color: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
         }
 
-        .msg-ai { align-items: flex-start; }
-        .msg-ai .msg-bubble {
+        .row-ai { align-items: flex-start; }
+        .ai-role-tag {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .row-ai .bubble-box {
             width: 100%;
             font-size: 15px;
-            line-height: 1.68;
-            color: #cbd5e1;
+            line-height: 1.7;
+            color: #e4e4e7;
         }
 
+        .bubble-box p { margin-bottom: 12px; }
+        .bubble-box p:last-child { margin-bottom: 0; }
+        .bubble-box ul, .bubble-box ol { margin: 8px 0 14px 22px; }
+        .bubble-box li { margin-bottom: 5px; }
+
+        /* Code Blocks */
         .code-container {
             position: relative;
-            margin: 14px 0;
-            border-radius: 10px;
+            margin: 16px 0;
+            border-radius: 12px;
             overflow: hidden;
             border: 1px solid var(--border);
+            background: #141418;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
         }
 
         .code-header {
-            background: #111726;
-            padding: 6px 12px;
+            background: #18181d;
+            padding: 8px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: var(--text-sub);
+            font-size: 11.5px;
+            color: var(--text-secondary);
             border-bottom: 1px solid var(--border);
         }
 
         .copy-code-btn {
             background: transparent;
             border: none;
-            color: var(--text-sub);
+            color: var(--text-secondary);
             cursor: pointer;
-            font-size: 11.5px;
+            font-size: 11px;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
+            transition: color 0.2s ease;
         }
         .copy-code-btn:hover { color: #fff; }
 
         pre {
-            background: #0b0f19 !important;
-            padding: 14px 16px;
+            background: #111115 !important;
+            padding: 16px;
             overflow-x: auto;
             margin: 0 !important;
         }
 
         code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; }
-        p code { background: #161e30; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+        p code {
+            background: #1f1f26;
+            color: var(--accent);
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
 
-        .dock-bar {
+        /* Floating Input Dock */
+        .input-dock {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(180deg, rgba(8, 11, 17, 0) 0%, rgba(8, 11, 17, 0.96) 25%, #080b11 100%);
-            padding: 0 20px 22px 20px;
+            background: linear-gradient(180deg, rgba(14, 14, 17, 0) 0%, rgba(14, 14, 17, 0.95) 30%, #0e0e11 100%);
+            padding: 0 24px 24px 24px;
             display: flex;
             justify-content: center;
-            z-index: 15;
+            z-index: 20;
         }
 
-        .dock-content {
+        .dock-shell {
             width: 100%;
             max-width: 820px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .chips-row {
+        .chips-list {
             display: flex;
             gap: 8px;
             overflow-x: auto;
             white-space: nowrap;
             scrollbar-width: none;
         }
-        .chips-row::-webkit-scrollbar { display: none; }
+        .chips-list::-webkit-scrollbar { display: none; }
 
-        .prompt-chip {
-            background: rgba(17, 23, 38, 0.7);
+        .chip-button {
+            background: rgba(24, 24, 28, 0.85);
             border: 1px solid var(--border);
-            color: var(--text-sub);
-            padding: 5px 12px;
-            border-radius: 20px;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 999px;
             font-size: 12px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(8px);
         }
-        .prompt-chip:hover { color: #fff; border-color: var(--accent); background: #151c2c; }
+        .chip-button:hover {
+            color: #fff;
+            border-color: var(--accent);
+            background: #1f1f26;
+            transform: translateY(-1px);
+        }
 
-        .input-pill {
-            background: #111726;
+        .input-pill-box {
+            background: var(--bg-panel);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 16px;
             display: flex;
             align-items: flex-end;
             padding: 10px 14px;
-            gap: 8px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            transition: border-color 0.2s, box-shadow 0.2s;
+            gap: 10px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
         }
 
-        .input-pill:focus-within {
+        .input-pill-box:focus-within {
             border-color: var(--accent);
-            box-shadow: 0 0 0 2px var(--accent-glow);
+            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
         }
 
         textarea {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-main);
+            color: var(--text-primary);
             font-family: inherit;
             font-size: 14.5px;
             line-height: 22px;
@@ -585,164 +715,181 @@ APP_TEMPLATE = """
             resize: none;
             outline: none;
         }
-        textarea::placeholder { color: #64748b; }
+        textarea::placeholder { color: var(--text-tertiary); }
 
-        .btn-icon {
+        .dock-action-btn {
             background: transparent;
             border: none;
-            color: var(--text-sub);
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            color: var(--text-secondary);
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: all 0.2s ease;
             flex-shrink: 0;
         }
-        .btn-icon:hover { color: #fff; }
+        .dock-action-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
 
-        .btn-send {
+        .btn-submit {
             background: var(--accent);
-            color: #080b11;
-            font-weight: 700;
+            color: #09090b;
         }
-        .btn-send:hover { background: #7dd3fc; color: #080b11; }
-        .btn-send:disabled { background: #1e2638; color: #64748b; cursor: not-allowed; }
-
-        .listening {
-            color: var(--alarm-red) !important;
-            animation: pulse-mic 1s infinite alternate;
+        .btn-submit:hover {
+            background: #5eead4;
+            color: #09090b;
+            transform: scale(1.04);
         }
-        @keyframes pulse-mic { from { opacity: 0.4; } to { opacity: 1; } }
+        .btn-submit:disabled {
+            background: #27272a;
+            color: #71717a;
+            cursor: not-allowed;
+            transform: none;
+        }
 
+        .mic-active {
+            color: var(--danger) !important;
+            animation: pulse-ring 1s infinite alternate;
+        }
+        @keyframes pulse-ring { from { opacity: 0.4; } to { opacity: 1; } }
+
+        /* Alarm Modal Overlay */
         .alarm-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             z-index: 100;
             justify-content: center;
             align-items: center;
         }
 
-        .alarm-box {
-            background: #111726;
-            border: 2px solid var(--alarm-red);
-            border-radius: 16px;
-            padding: 32px;
+        .alarm-card {
+            background: #18181c;
+            border: 2px solid var(--danger);
+            border-radius: 20px;
+            padding: 34px;
             text-align: center;
             max-width: 400px;
             width: 90%;
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 0 60px rgba(244, 63, 94, 0.4);
         }
-        .alarm-box h3 { color: var(--alarm-red); font-size: 20px; margin-bottom: 8px; }
-        .alarm-box p { font-size: 16px; margin-bottom: 22px; font-weight: 600; }
+        .alarm-card h3 { color: var(--danger); font-size: 21px; margin-bottom: 8px; }
+        .alarm-card p { font-size: 16px; margin-bottom: 24px; font-weight: 600; color: #fff; }
         .btn-dismiss {
-            background: var(--alarm-red);
+            background: var(--danger);
             color: #fff;
             border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
+            padding: 11px 26px;
+            border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
+            transition: opacity 0.2s ease;
         }
+        .btn-dismiss:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand-container">
-            <div class="brand-logo">
+        <div class="header-left">
+            <div class="brand-badge">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                 DevFlow AI
             </div>
-            <div class="persona-badge">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+            <div class="persona-container">
+                <span class="persona-dot"></span>
                 <select id="persona-select" class="persona-select">
-                    <option value="code_architect">Mode: Code Architect</option>
-                    <option value="dsa_tutor">Mode: DSA & Complexity Tutor</option>
-                    <option value="personal_companion">Mode: Personal Assistant</option>
+                    <option value="code_architect">Role: Code Architect</option>
+                    <option value="dsa_tutor">Role: DSA & Complexity Tutor</option>
+                    <option value="personal_companion">Role: Personal Assistant</option>
                 </select>
             </div>
         </div>
 
-        <div class="header-controls">
-            <span class="user-tag">Engineer: <span>{{ username }}</span></span>
-            <button class="btn-action" onclick="exportChat()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <div class="header-right">
+            <div class="user-pill">Engineer: <strong>{{ username }}</strong></div>
+            <button class="header-btn" onclick="exportChat()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 Export .MD
             </button>
             <form action="/clear" method="POST" style="margin: 0;">
-                <button type="submit" class="btn-action">Clear</button>
+                <button type="submit" class="header-btn">Clear</button>
             </form>
-            <a href="/logout" class="btn-action btn-danger">Log Out</a>
+            <a href="/logout" class="header-btn header-btn-danger">Log Out</a>
         </div>
     </header>
 
     <div class="workspace">
         <aside>
-            <div class="sidebar-header">
-                <span>Alarms & Tasks</span>
-                <span id="active-count" style="color:var(--accent);">0</span>
+            <div class="sidebar-title-bar">
+                <span class="sidebar-title">Alarms & Schedule</span>
+                <span id="active-count" class="counter-badge">0</span>
             </div>
 
-            <form id="alarm-form" class="alarm-form">
-                <input type="text" id="rem-title" placeholder="Alarm Title (e.g. Sync review)" required>
+            <form id="alarm-form" class="task-input-card">
+                <input type="text" id="rem-title" placeholder="Reminder title..." required>
                 <input type="time" id="rem-time" required>
-                <button type="submit" class="btn-add-alarm">+ Set Alarm</button>
+                <button type="submit" class="btn-set-alarm">+ Set Alarm</button>
             </form>
 
-            <div class="reminders-list" id="reminders-list"></div>
+            <div class="reminders-viewport" id="reminders-list">
+                <!-- Dynamically loaded -->
+            </div>
         </aside>
 
         <main>
-            <div class="chat-scroll" id="scroll-box">
-                <div class="feed-container" id="feed-container">
+            <div class="chat-scroll-feed" id="scroll-box">
+                <div class="messages-container" id="messages-container">
                     {% if not history %}
-                        <div class="msg-row msg-ai">
-                            <div class="msg-role">DevFlow Core</div>
-                            <div class="msg-bubble">
-                                <p>Welcome, <strong>{{ username }}</strong>. Workspace online. You can ask for code reviews, architectural blueprints, or use voice input to speak commands.</p>
+                        <div class="message-row row-ai">
+                            <div class="message-meta">
+                                <span class="ai-role-tag">DevFlow Core</span>
+                            </div>
+                            <div class="bubble-box">
+                                <p>Welcome, <strong>{{ username }}</strong>. Workspace ready. Ask me to design scalable architecture, analyze algorithms, or dictate instructions using the mic.</p>
                             </div>
                         </div>
                     {% endif %}
 
                     {% for message in history %}
                         {% if message.role == 'user' %}
-                            <div class="msg-row msg-user">
-                                <div class="msg-role">You</div>
-                                <div class="msg-bubble">{{ message.text }}</div>
+                            <div class="message-row row-user">
+                                <div class="message-meta">You</div>
+                                <div class="bubble-box">{{ message.text }}</div>
                             </div>
                         {% else %}
-                            <div class="msg-row msg-ai">
-                                <div class="msg-role">DevFlow Core</div>
-                                <div class="msg-bubble rendered-msg">{{ message.text }}</div>
+                            <div class="message-row row-ai">
+                                <div class="message-meta">
+                                    <span class="ai-role-tag">DevFlow Core</span>
+                                </div>
+                                <div class="bubble-box rendered-content">{{ message.text }}</div>
                             </div>
                         {% endif %}
                     {% endfor %}
                 </div>
             </div>
 
-            <div class="dock-bar">
-                <div class="dock-content">
-                    <div class="chips-row">
-                        <button type="button" class="prompt-chip" onclick="setPrompt('Implement a thread-safe Singleton in Java with explanation')">☕ Java Singleton</button>
-                        <button type="button" class="prompt-chip" onclick="setPrompt('Design an LRU Cache with O(1) get and put in Java')">⚡ LRU Cache</button>
-                        <button type="button" class="prompt-chip" onclick="setPrompt('Explain differences between TCP and UDP with latency trade-offs')">🌐 TCP vs UDP</button>
+            <div class="input-dock">
+                <div class="dock-shell">
+                    <div class="chips-list">
+                        <button type="button" class="chip-button" onclick="setPrompt('Implement a thread-safe Singleton in Java with explanation')">☕ Java Singleton</button>
+                        <button type="button" class="chip-button" onclick="setPrompt('Design an LRU Cache with O(1) get and put in Java')">⚡ LRU Cache (Java)</button>
+                        <button type="button" class="chip-button" onclick="setPrompt('Explain differences between TCP and UDP with latency trade-offs')">🌐 TCP vs UDP</button>
                     </div>
 
-                    <form id="chat-form" class="input-pill">
-                        <button type="button" id="mic-btn" class="btn-icon" title="Voice Input (Speech-to-Text)">
+                    <form id="chat-form" class="input-pill-box">
+                        <button type="button" id="mic-btn" class="dock-action-btn" title="Voice Input">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
                         </button>
 
-                        <textarea id="prompt" rows="1" placeholder="Type prompt or use mic to dictate..."></textarea>
+                        <textarea id="prompt" rows="1" placeholder="Type a message or use speech-to-text..."></textarea>
 
-                        <button type="submit" id="send-btn" class="btn-icon btn-send" title="Send message">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        <button type="submit" id="send-btn" class="dock-action-btn btn-submit" title="Send">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                         </button>
                     </form>
                 </div>
@@ -750,8 +897,9 @@ APP_TEMPLATE = """
         </main>
     </div>
 
+    <!-- Active Alarm Ringing Modal -->
     <div class="alarm-modal" id="alarm-modal">
-        <div class="alarm-box">
+        <div class="alarm-card">
             <h3>⏰ ALARM RINGING</h3>
             <p id="alarm-desc">Task notification</p>
             <button class="btn-dismiss" onclick="dismissAlarm()">Dismiss Alarm</button>
@@ -760,7 +908,7 @@ APP_TEMPLATE = """
 
     <script>
         const scrollBox = document.getElementById('scroll-box');
-        const feed = document.getElementById('feed-container');
+        const container = document.getElementById('messages-container');
         const promptInput = document.getElementById('prompt');
         const form = document.getElementById('chat-form');
         const sendBtn = document.getElementById('send-btn');
@@ -783,7 +931,7 @@ APP_TEMPLATE = """
                     const header = document.createElement('div');
                     header.className = 'code-header';
                     header.innerHTML = `
-                        <span>${block.className.replace('hljs ', '').replace('language-', '') || 'code'}</span>
+                        <span>${block.className.replace('hljs ', '').replace('language-', '') || 'snippet'}</span>
                         <button class="copy-code-btn" onclick="copySnippet(this)">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                             Copy
@@ -796,12 +944,12 @@ APP_TEMPLATE = """
             });
         }
 
-        document.querySelectorAll('.rendered-msg').forEach(formatMarkdownAndCode);
+        document.querySelectorAll('.rendered-content').forEach(formatMarkdownAndCode);
 
         function copySnippet(btn) {
             const code = btn.closest('.code-container').querySelector('code').innerText;
             navigator.clipboard.writeText(code);
-            btn.innerHTML = '✓ Copied!';
+            btn.innerHTML = '✓ Copied';
             setTimeout(() => {
                 btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy`;
             }, 1800);
@@ -826,24 +974,25 @@ APP_TEMPLATE = """
             }
         });
 
+        // ---------------- STREAMING PIPELINE ---------------- //
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = promptInput.value.trim();
             if (!text) return;
 
             const userRow = document.createElement('div');
-            userRow.className = 'msg-row msg-user';
-            userRow.innerHTML = `<div class="msg-role">You</div><div class="msg-bubble">${escapeHtml(text)}</div>`;
-            feed.appendChild(userRow);
+            userRow.className = 'message-row row-user';
+            userRow.innerHTML = `<div class="message-meta">You</div><div class="bubble-box">${escapeHtml(text)}</div>`;
+            container.appendChild(userRow);
 
             promptInput.value = '';
             promptInput.style.height = '22px';
             scrollToBottom();
 
             const aiRow = document.createElement('div');
-            aiRow.className = 'msg-row msg-ai';
-            aiRow.innerHTML = `<div class="msg-role">DevFlow Core</div><div class="msg-bubble stream-target"><span style="color:#64748b; font-style:italic;">Synthesizing response...</span></div>`;
-            feed.appendChild(aiRow);
+            aiRow.className = 'message-row row-ai';
+            aiRow.innerHTML = `<div class="message-meta"><span class="ai-role-tag">DevFlow Core</span></div><div class="bubble-box stream-target"><span style="color:#71717a; font-style:italic;">Processing query...</span></div>`;
+            container.appendChild(aiRow);
             scrollToBottom();
 
             const streamTarget = aiRow.querySelector('.stream-target');
@@ -878,12 +1027,13 @@ APP_TEMPLATE = """
                 });
 
             } catch (err) {
-                streamTarget.innerHTML = `<span style="color:#ef4444;">Connection failed. Retry in a moment.</span>`;
+                streamTarget.innerHTML = `<span style="color:#f43f5e;">Connection failed. Retry in a moment.</span>`;
             } finally {
                 sendBtn.disabled = false;
             }
         });
 
+        // ---------------- WEB SPEECH API ---------------- //
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
@@ -892,15 +1042,15 @@ APP_TEMPLATE = """
             recognition.lang = 'en-US';
 
             micBtn.addEventListener('click', () => {
-                if (micBtn.classList.contains('listening')) {
+                if (micBtn.classList.contains('mic-active')) {
                     recognition.stop();
                 } else {
                     recognition.start();
                 }
             });
 
-            recognition.onstart = () => { micBtn.classList.add('listening'); };
-            recognition.onend = () => { micBtn.classList.remove('listening'); };
+            recognition.onstart = () => { micBtn.classList.add('mic-active'); };
+            recognition.onend = () => { micBtn.classList.remove('mic-active'); };
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 promptInput.value = (promptInput.value + ' ' + transcript).trim();
@@ -911,11 +1061,12 @@ APP_TEMPLATE = """
             micBtn.style.display = 'none';
         }
 
+        // ---------------- EXPORT CHAT (.MD) ---------------- //
         function exportChat() {
             let markdownContent = "# DevFlow AI - Session Transcript\\n\\n";
-            document.querySelectorAll('.msg-row').forEach(row => {
-                const role = row.querySelector('.msg-role').innerText;
-                const body = row.querySelector('.msg-bubble').innerText;
+            document.querySelectorAll('.message-row').forEach(row => {
+                const role = row.querySelector('.message-meta').innerText;
+                const body = row.querySelector('.bubble-box').innerText;
                 markdownContent += `### ${role}\\n${body}\\n\\n---\\n\\n`;
             });
 
@@ -926,6 +1077,7 @@ APP_TEMPLATE = """
             link.click();
         }
 
+        // ---------------- ALARMS & AUDIO ENGINE ---------------- //
         let currentAlarmId = null;
         let audioCtx = null;
         let alarmLoop = null;
@@ -936,7 +1088,7 @@ APP_TEMPLATE = """
             const gain = audioCtx.createGain();
             osc.type = 'sine';
             osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
@@ -950,15 +1102,25 @@ APP_TEMPLATE = """
             listContainer.innerHTML = '';
             document.getElementById('active-count').textContent = list.length;
 
+            if (list.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-tasks">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span>No active alarms</span>
+                    </div>
+                `;
+                return;
+            }
+
             list.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'reminder-card';
+                card.className = 'task-item';
                 card.innerHTML = `
-                    <div class="reminder-info">
-                        <span class="reminder-title">${escapeHtml(item.title)}</span>
-                        <span class="reminder-clock">⏰ ${item.remind_time}</span>
+                    <div class="task-details">
+                        <span class="task-name">${escapeHtml(item.title)}</span>
+                        <span class="task-timestamp">⏰ ${item.remind_time}</span>
                     </div>
-                    <button class="reminder-del" onclick="deleteReminder(${item.id})">✕</button>
+                    <button class="task-delete-btn" onclick="deleteReminder(${item.id})">✕</button>
                 `;
                 listContainer.appendChild(card);
             });
@@ -1112,7 +1274,6 @@ def generate():
     gemini_contents.append({"role": "user", "parts": [{"text": user_prompt}]})
 
     def generate_stream():
-        # Fallback list: agar ek model 503 high demand par ho, turant doosre se stream karega
         models_to_try = [
             "gemini-flash-latest",
             "gemini-3.5-flash",
@@ -1139,10 +1300,9 @@ def generate():
                         yield chunk.text
                 
                 if streamed_anything:
-                    return  # Successfully generated and streamed
+                    return
             except Exception as e:
                 err_text = str(e)
-                # Agar capacity, load, ya 503 error hai, silently agle model par jump karega
                 if any(k in err_text for k in ["503", "UNAVAILABLE", "ResourceExhausted", "429", "404"]):
                     continue
                 else:
