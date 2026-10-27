@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from google import genai
 import os
 import sqlite3
+import time
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'devflow_ultra_secure_key_2026')
@@ -1128,31 +1129,29 @@ def generate():
     gemini_contents.append({"role": "user", "parts": [{"text": user_prompt}]})
 
     def generate_stream():
-        models_to_try = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
-        success = False
-
-        for model_name in models_to_try:
+        max_retries = 3
+        for attempt in range(max_retries):
             try:
                 response = client.models.generate_content_stream(
-                    model=model_name,
+                    model="gemini-3.8-flash",
                     contents=gemini_contents,
                     config={"system_instruction": system_instruction}
                 )
                 for chunk in response:
                     if chunk.text:
                         yield chunk.text
-                success = True
-                break
+                return
             except Exception as e:
                 err_text = str(e)
-                if "503" in err_text or "UNAVAILABLE" in err_text or "ResourceExhausted" in err_text:
+                if ("503" in err_text or "UNAVAILABLE" in err_text or "ResourceExhausted" in err_text) and attempt < max_retries - 1:
+                    time.sleep(1.5)
                     continue
                 else:
-                    yield f"Error generating response: {err_text}"
+                    if "503" in err_text or "UNAVAILABLE" in err_text:
+                        yield "AI servers are experiencing high peak load. Please try your prompt again in a moment."
+                    else:
+                        yield f"Error generating response: {err_text}"
                     return
-
-        if not success:
-            yield "AI service is currently under peak global traffic. Please retry in 5 seconds."
 
     return Response(generate_stream(), mimetype='text/plain')
 
