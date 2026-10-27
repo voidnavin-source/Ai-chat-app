@@ -6,7 +6,7 @@ import os
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'devflow_ultra_secure_key_2026')
+app.secret_key = os.environ.get('SECRET_KEY', 'devflow_siltstone_edition_2026')
 
 client = genai.Client()
 DB_FILE = "assistant.db"
@@ -49,25 +49,26 @@ AUTH_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevFlow AI - Workspace</title>
+    <title>DevFlow AI - Access</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-page: #0f0f12;
-            --bg-card: #18181b;
-            --border-subtle: #27272a;
-            --accent: #2dd4bf;
-            --text-main: #f4f4f5;
-            --text-muted: #a1a1aa;
+            --bg-page: #FAF7EE;
+            --bg-card: #FFFFFF;
+            --border-card: #E8E0CE;
+            --accent: #FFB16E;
+            --accent-hover: #F29E54;
+            --text-main: #24211D;
+            --text-sub: #7A7264;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-page);
-            background-image: radial-gradient(circle at 50% 0%, rgba(45, 212, 191, 0.05) 0%, transparent 60%);
+            background-image: radial-gradient(circle at 50% 0%, rgba(255, 177, 110, 0.15) 0%, transparent 60%);
             color: var(--text-main);
             height: 100vh;
             display: flex;
@@ -77,84 +78,86 @@ AUTH_TEMPLATE = """
         .auth-card {
             width: 100%;
             max-width: 400px;
-            padding: 40px 32px;
+            padding: 42px 34px;
             background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--border-card);
+            border-radius: 24px;
+            box-shadow: 0 20px 45px rgba(203, 189, 147, 0.28);
         }
         .auth-logo {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            font-size: 21px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--accent);
+            color: #C08A3E;
             letter-spacing: -0.4px;
             margin-bottom: 6px;
         }
         .auth-sub {
             text-align: center;
             font-size: 13.5px;
-            color: var(--text-muted);
-            margin-bottom: 26px;
+            color: var(--text-sub);
+            margin-bottom: 28px;
         }
         .input-group { margin-bottom: 18px; }
         label {
             display: block;
             font-size: 12px;
-            color: var(--text-muted);
+            color: var(--text-sub);
             margin-bottom: 7px;
             font-weight: 600;
             letter-spacing: 0.3px;
+            text-transform: uppercase;
         }
         input {
             width: 100%;
-            background: #121215;
-            border: 1px solid var(--border-subtle);
-            border-radius: 10px;
+            background: #FDFBF7;
+            border: 1px solid var(--border-card);
+            border-radius: 12px;
             padding: 12px 14px;
-            color: #fff;
-            font-size: 14px;
+            color: var(--text-main);
+            font-size: 14.5px;
             outline: none;
             transition: all 0.2s ease;
         }
         input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+            box-shadow: 0 0 0 3px rgba(255, 177, 110, 0.25);
+            background: #FFFFFF;
         }
         button {
             width: 100%;
             background: var(--accent);
-            color: #09090b;
+            color: #261D12;
             border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 600;
+            padding: 13px;
+            border-radius: 12px;
+            font-weight: 700;
             font-size: 14.5px;
             cursor: pointer;
             margin-top: 10px;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(45, 212, 191, 0.2);
+            box-shadow: 0 4px 14px rgba(255, 177, 110, 0.35);
         }
         button:hover {
-            opacity: 0.94;
+            background: var(--accent-hover);
             transform: translateY(-1px);
         }
         .switch-link {
             text-align: center;
             margin-top: 22px;
             font-size: 13px;
-            color: var(--text-muted);
+            color: var(--text-sub);
         }
-        .switch-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
+        .switch-link a { color: #C08A3E; text-decoration: none; font-weight: 600; }
         .error-msg {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #DC2626;
             padding: 10px 14px;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 13px;
             margin-bottom: 18px;
             text-align: center;
@@ -164,7 +167,7 @@ AUTH_TEMPLATE = """
 <body>
     <div class="auth-card">
         <div class="auth-logo">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
             DevFlow AI
         </div>
         <p class="auth-sub">{{ mode_title }}</p>
@@ -189,7 +192,7 @@ AUTH_TEMPLATE = """
             {% if is_login %}
                 Need an account? <a href="/register">Sign Up</a>
             {% else %}
-                Already registered? <a href="/login">Sign In</a>
+                Already have account? <a href="/login">Sign In</a>
             {% endif %}
         </div>
     </div>
@@ -210,26 +213,24 @@ APP_TEMPLATE = """
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <style>
         :root {
-            --bg-canvas: #0e0e11;
-            --bg-sidebar: #131317;
-            --bg-panel: #18181c;
-            --bg-input: #1e1e24;
-            --border: #26262b;
-            --border-hover: #3a3a42;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-tertiary: #71717a;
-            --accent: #2dd4bf;
-            --accent-soft: rgba(45, 212, 191, 0.12);
-            --user-bubble: #1c2333;
-            --user-bubble-border: #29354d;
-            --danger: #f43f5e;
-            --danger-soft: rgba(244, 63, 94, 0.1);
+            --bg-canvas: #FAF7EE;
+            --bg-sidebar: #F4EEDC;
+            --bg-card: #FFFFFF;
+            --border-warm: #E6DCBF;
+            --border-subtle: #EBE4D1;
+            --text-heading: #26231E;
+            --text-body: #3D3830;
+            --text-muted: #7E7566;
+            --accent-warm: #FFB16E;
+            --accent-ochre: #CCA25A;
+            --accent-ochre-dark: #A97E32;
+            --user-bubble: #F0E8D0;
+            --danger: #E11D48;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -237,7 +238,7 @@ APP_TEMPLATE = """
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-canvas);
-            color: var(--text-primary);
+            color: var(--text-body);
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -245,16 +246,16 @@ APP_TEMPLATE = """
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Glassmorphism Header */
+        /* Warm Cream Glass Header */
         header {
-            height: 60px;
+            height: 62px;
             padding: 0 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(14, 14, 17, 0.85);
+            background: rgba(250, 247, 238, 0.92);
             backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-warm);
             z-index: 30;
         }
 
@@ -268,49 +269,42 @@ APP_TEMPLATE = """
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 15.5px;
+            font-size: 16px;
             font-weight: 700;
-            color: #fff;
+            color: var(--text-heading);
             letter-spacing: -0.3px;
         }
 
-        .brand-badge svg { color: var(--accent); }
+        .brand-badge svg { color: var(--accent-ochre-dark); }
 
         .persona-container {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
+            background: #FFFFFF;
+            border: 1px solid var(--border-warm);
             border-radius: 999px;
-            padding: 3px 10px;
+            padding: 3px 12px;
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: border-color 0.2s ease;
+            box-shadow: 0 2px 6px rgba(203, 189, 147, 0.15);
         }
-
-        .persona-container:hover { border-color: var(--border-hover); }
 
         .persona-dot {
             width: 7px;
             height: 7px;
-            background: var(--accent);
+            background: var(--accent-warm);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent);
+            box-shadow: 0 0 6px var(--accent-warm);
         }
 
         .persona-select {
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             font-size: 12px;
             font-weight: 600;
             outline: none;
             cursor: pointer;
             font-family: inherit;
-        }
-
-        .persona-select option {
-            background: var(--bg-panel);
-            color: var(--text-primary);
         }
 
         .header-right {
@@ -321,19 +315,20 @@ APP_TEMPLATE = """
 
         .user-pill {
             font-size: 12.5px;
-            color: var(--text-secondary);
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            padding: 4px 10px;
-            border-radius: 6px;
+            color: var(--text-muted);
+            background: #FFFFFF;
+            border: 1px solid var(--border-warm);
+            padding: 5px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(203, 189, 147, 0.1);
         }
-        .user-pill strong { color: var(--text-primary); font-weight: 600; }
+        .user-pill strong { color: var(--text-heading); font-weight: 600; }
 
         .header-btn {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 6px 12px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-warm);
+            color: var(--text-muted);
+            padding: 6px 14px;
             border-radius: 8px;
             font-size: 12px;
             font-weight: 600;
@@ -343,37 +338,38 @@ APP_TEMPLATE = """
             align-items: center;
             gap: 6px;
             transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(203, 189, 147, 0.1);
         }
 
         .header-btn:hover {
-            color: var(--text-primary);
-            border-color: var(--border-hover);
-            background: #202026;
+            color: var(--text-heading);
+            border-color: var(--accent-ochre);
+            background: #FBF9F2;
         }
 
         .header-btn-danger:hover {
             color: var(--danger);
-            border-color: rgba(244, 63, 94, 0.4);
-            background: var(--danger-soft);
+            border-color: rgba(225, 29, 72, 0.3);
+            background: rgba(225, 29, 72, 0.05);
         }
 
         /* Workspace Core Layout */
         .workspace {
             display: flex;
             flex: 1;
-            height: calc(100vh - 60px);
+            height: calc(100vh - 62px);
             overflow: hidden;
         }
 
-        /* Elevated Left Sidebar */
+        /* Siltstone Warm Sidebar */
         aside {
-            width: 290px;
+            width: 300px;
             background: var(--bg-sidebar);
-            border-right: 1px solid var(--border);
+            border-right: 1px solid var(--border-warm);
             display: flex;
             flex-direction: column;
-            padding: 20px 16px;
-            gap: 18px;
+            padding: 22px 18px;
+            gap: 20px;
         }
 
         .sidebar-title-bar {
@@ -381,7 +377,7 @@ APP_TEMPLATE = """
             justify-content: space-between;
             align-items: center;
             padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-warm);
         }
 
         .sidebar-title {
@@ -389,97 +385,103 @@ APP_TEMPLATE = """
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            color: var(--text-tertiary);
+            color: var(--accent-ochre-dark);
         }
 
         .counter-badge {
-            background: var(--accent-soft);
-            color: var(--accent);
+            background: #FFF5B8;
+            color: var(--accent-ochre-dark);
+            border: 1px solid var(--border-warm);
             font-size: 11px;
             font-weight: 700;
-            padding: 2px 7px;
+            padding: 2px 8px;
             border-radius: 12px;
         }
 
         .task-input-card {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-warm);
+            border-radius: 14px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(203, 189, 147, 0.2);
         }
 
         .task-input-card input {
-            background: #111114;
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 9px 11px;
-            border-radius: 8px;
-            font-size: 12.5px;
+            background: #FDFCF9;
+            border: 1px solid var(--border-warm);
+            color: var(--text-heading);
+            padding: 10px 12px;
+            border-radius: 9px;
+            font-size: 13px;
             outline: none;
             transition: all 0.2s ease;
         }
 
         .task-input-card input:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
+            border-color: var(--accent-warm);
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px rgba(255, 177, 110, 0.2);
         }
 
         .btn-set-alarm {
-            background: var(--accent);
-            color: #09090b;
+            background: var(--accent-warm);
+            color: #261D12;
             border: none;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12.5px;
+            padding: 9px;
+            border-radius: 9px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            transition: opacity 0.2s ease;
-            box-shadow: 0 2px 10px rgba(45, 212, 191, 0.2);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(255, 177, 110, 0.35);
         }
 
-        .btn-set-alarm:hover { opacity: 0.92; }
+        .btn-set-alarm:hover {
+            background: #F29E54;
+            transform: translateY(-1px);
+        }
 
         .reminders-viewport {
             flex: 1;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .reminders-viewport::-webkit-scrollbar { width: 4px; }
-        .reminders-viewport::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .reminders-viewport::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 2px; }
 
         .empty-tasks {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: var(--text-tertiary);
+            color: var(--text-muted);
             gap: 8px;
             height: 140px;
             font-size: 12.5px;
             text-align: center;
         }
 
-        .empty-tasks svg { opacity: 0.4; }
+        .empty-tasks svg { opacity: 0.5; color: var(--accent-ochre); }
 
         .task-item {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 12px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-warm);
+            border-radius: 12px;
+            padding: 12px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 6px rgba(203, 189, 147, 0.15);
             transition: border-color 0.2s ease;
         }
 
-        .task-item:hover { border-color: var(--border-hover); }
+        .task-item:hover { border-color: var(--accent-ochre); }
 
         .task-details {
             display: flex;
@@ -487,25 +489,25 @@ APP_TEMPLATE = """
             gap: 2px;
         }
 
-        .task-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
-        .task-timestamp { font-size: 11px; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+        .task-name { font-size: 13px; font-weight: 600; color: var(--text-heading); }
+        .task-timestamp { font-size: 11.5px; color: var(--accent-ochre-dark); font-family: 'JetBrains Mono', monospace; font-weight: 600; }
 
         .task-delete-btn {
             background: transparent;
             border: none;
-            color: var(--text-tertiary);
+            color: var(--text-muted);
             cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
+            padding: 4px 6px;
+            border-radius: 6px;
             transition: all 0.2s ease;
         }
 
         .task-delete-btn:hover {
             color: var(--danger);
-            background: var(--danger-soft);
+            background: rgba(225, 29, 72, 0.08);
         }
 
-        /* Main Chat Workspace */
+        /* Warm Canvas Chat Area */
         main {
             flex: 1;
             display: flex;
@@ -518,11 +520,11 @@ APP_TEMPLATE = """
             flex: 1;
             overflow-y: auto;
             scroll-behavior: smooth;
-            padding: 32px 24px 170px 24px;
+            padding: 34px 28px 180px 28px;
         }
 
         .chat-scroll-feed::-webkit-scrollbar { width: 6px; }
-        .chat-scroll-feed::-webkit-scrollbar-thumb { background: #26262b; border-radius: 3px; }
+        .chat-scroll-feed::-webkit-scrollbar-thumb { background: var(--border-warm); border-radius: 3px; }
 
         .messages-container {
             max-width: 820px;
@@ -542,29 +544,30 @@ APP_TEMPLATE = """
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 11.5px;
+            font-size: 12px;
             font-weight: 600;
             margin-bottom: 8px;
         }
 
         .row-user { align-items: flex-end; }
-        .row-user .message-meta { color: #93c5fd; }
+        .row-user .message-meta { color: var(--accent-ochre-dark); }
         .row-user .bubble-box {
             background: var(--user-bubble);
-            border: 1px solid var(--user-bubble-border);
+            border: 1px solid var(--border-warm);
             border-radius: 18px 18px 4px 18px;
-            padding: 14px 18px;
+            padding: 14px 20px;
             max-width: 82%;
             font-size: 14.5px;
-            line-height: 1.6;
-            color: #ffffff;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            line-height: 1.65;
+            color: var(--text-heading);
+            box-shadow: 0 4px 14px rgba(203, 189, 147, 0.22);
         }
 
         .row-ai { align-items: flex-start; }
         .ai-role-tag {
-            background: var(--accent-soft);
-            color: var(--accent);
+            background: #FFF5B8;
+            color: var(--accent-ochre-dark);
+            border: 1px solid var(--border-warm);
             border-radius: 6px;
             padding: 2px 8px;
             font-size: 11px;
@@ -575,8 +578,8 @@ APP_TEMPLATE = """
         .row-ai .bubble-box {
             width: 100%;
             font-size: 15px;
-            line-height: 1.7;
-            color: #e4e4e7;
+            line-height: 1.72;
+            color: var(--text-body);
         }
 
         .bubble-box p { margin-bottom: 12px; }
@@ -584,44 +587,45 @@ APP_TEMPLATE = """
         .bubble-box ul, .bubble-box ol { margin: 8px 0 14px 22px; }
         .bubble-box li { margin-bottom: 5px; }
 
-        /* Code Blocks */
+        /* Code Blocks - GitHub Classic Warm Integration */
         .code-container {
             position: relative;
             margin: 16px 0;
             border-radius: 12px;
             overflow: hidden;
-            border: 1px solid var(--border);
-            background: #141418;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border-warm);
+            background: #FFFFFF;
+            box-shadow: 0 4px 18px rgba(203, 189, 147, 0.25);
         }
 
         .code-header {
-            background: #18181d;
+            background: #F8F5EB;
             padding: 8px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-family: 'JetBrains Mono', monospace;
             font-size: 11.5px;
-            color: var(--text-secondary);
-            border-bottom: 1px solid var(--border);
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-warm);
         }
 
         .copy-code-btn {
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             cursor: pointer;
-            font-size: 11px;
+            font-size: 11.5px;
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            font-weight: 600;
             transition: color 0.2s ease;
         }
-        .copy-code-btn:hover { color: #fff; }
+        .copy-code-btn:hover { color: var(--text-heading); }
 
         pre {
-            background: #111115 !important;
+            background: #FCFAF5 !important;
             padding: 16px;
             overflow-x: auto;
             margin: 0 !important;
@@ -629,21 +633,22 @@ APP_TEMPLATE = """
 
         code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; }
         p code {
-            background: #1f1f26;
-            color: var(--accent);
-            padding: 3px 6px;
+            background: #FFF5B8;
+            color: #8C6219;
+            border: 1px solid #EAE0C7;
+            padding: 2px 6px;
             border-radius: 5px;
             font-size: 13px;
         }
 
-        /* Floating Input Dock */
+        /* Warm Floating Dock */
         .input-dock {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(180deg, rgba(14, 14, 17, 0) 0%, rgba(14, 14, 17, 0.95) 30%, #0e0e11 100%);
-            padding: 0 24px 24px 24px;
+            background: linear-gradient(180deg, rgba(250, 247, 238, 0) 0%, rgba(250, 247, 238, 0.94) 28%, #FAF7EE 100%);
+            padding: 0 24px 26px 24px;
             display: flex;
             justify-content: center;
             z-index: 20;
@@ -667,60 +672,60 @@ APP_TEMPLATE = """
         .chips-list::-webkit-scrollbar { display: none; }
 
         .chip-button {
-            background: rgba(24, 24, 28, 0.85);
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
+            background: #FFFFFF;
+            border: 1px solid var(--border-warm);
+            color: var(--text-muted);
             padding: 6px 14px;
             border-radius: 999px;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 12.5px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            backdrop-filter: blur(8px);
+            box-shadow: 0 2px 6px rgba(203, 189, 147, 0.15);
         }
         .chip-button:hover {
-            color: #fff;
-            border-color: var(--accent);
-            background: #1f1f26;
+            color: var(--text-heading);
+            border-color: var(--accent-warm);
+            background: #FFFBF4;
             transform: translateY(-1px);
         }
 
         .input-pill-box {
-            background: var(--bg-panel);
-            border: 1px solid var(--border);
-            border-radius: 16px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-warm);
+            border-radius: 18px;
             display: flex;
             align-items: flex-end;
-            padding: 10px 14px;
+            padding: 10px 16px;
             gap: 10px;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 30px rgba(203, 189, 147, 0.35);
             transition: all 0.2s ease;
         }
 
         .input-pill-box:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
+            border-color: var(--accent-warm);
+            box-shadow: 0 0 0 3px rgba(255, 177, 110, 0.25);
         }
 
         textarea {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-primary);
+            color: var(--text-heading);
             font-family: inherit;
-            font-size: 14.5px;
+            font-size: 15px;
             line-height: 22px;
             max-height: 120px;
             height: 22px;
             resize: none;
             outline: none;
         }
-        textarea::placeholder { color: var(--text-tertiary); }
+        textarea::placeholder { color: #A69D8E; }
 
         .dock-action-btn {
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             width: 34px;
             height: 34px;
             border-radius: 10px;
@@ -731,20 +736,19 @@ APP_TEMPLATE = """
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
-        .dock-action-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.05); }
+        .dock-action-btn:hover { color: var(--text-heading); background: #F8F5EB; }
 
         .btn-submit {
-            background: var(--accent);
-            color: #09090b;
+            background: var(--accent-warm);
+            color: #261D12;
         }
         .btn-submit:hover {
-            background: #5eead4;
-            color: #09090b;
-            transform: scale(1.04);
+            background: #F29E54;
+            transform: scale(1.05);
         }
         .btn-submit:disabled {
-            background: #27272a;
-            color: #71717a;
+            background: #E8E0CD;
+            color: #A39A88;
             cursor: not-allowed;
             transform: none;
         }
@@ -755,30 +759,30 @@ APP_TEMPLATE = """
         }
         @keyframes pulse-ring { from { opacity: 0.4; } to { opacity: 1; } }
 
-        /* Alarm Modal Overlay */
+        /* Warm Alarm Modal Overlay */
         .alarm-modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
+            background: rgba(38, 35, 30, 0.65);
+            backdrop-filter: blur(8px);
             z-index: 100;
             justify-content: center;
             align-items: center;
         }
 
         .alarm-card {
-            background: #18181c;
+            background: #FFFFFF;
             border: 2px solid var(--danger);
             border-radius: 20px;
             padding: 34px;
             text-align: center;
             max-width: 400px;
             width: 90%;
-            box-shadow: 0 0 60px rgba(244, 63, 94, 0.4);
+            box-shadow: 0 10px 40px rgba(225, 29, 72, 0.25);
         }
-        .alarm-card h3 { color: var(--danger); font-size: 21px; margin-bottom: 8px; }
-        .alarm-card p { font-size: 16px; margin-bottom: 24px; font-weight: 600; color: #fff; }
+        .alarm-card h3 { color: var(--danger); font-size: 20px; margin-bottom: 8px; }
+        .alarm-card p { font-size: 16px; margin-bottom: 24px; font-weight: 600; color: var(--text-heading); }
         .btn-dismiss {
             background: var(--danger);
             color: #fff;
@@ -797,7 +801,7 @@ APP_TEMPLATE = """
     <header>
         <div class="header-left">
             <div class="brand-badge">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                 DevFlow AI
             </div>
             <div class="persona-container">
@@ -897,7 +901,7 @@ APP_TEMPLATE = """
         </main>
     </div>
 
-    <!-- Active Alarm Ringing Modal -->
+    <!-- Active Alarm Modal Overlay -->
     <div class="alarm-modal" id="alarm-modal">
         <div class="alarm-card">
             <h3>⏰ ALARM RINGING</h3>
@@ -991,7 +995,7 @@ APP_TEMPLATE = """
 
             const aiRow = document.createElement('div');
             aiRow.className = 'message-row row-ai';
-            aiRow.innerHTML = `<div class="message-meta"><span class="ai-role-tag">DevFlow Core</span></div><div class="bubble-box stream-target"><span style="color:#71717a; font-style:italic;">Processing query...</span></div>`;
+            aiRow.innerHTML = `<div class="message-meta"><span class="ai-role-tag">DevFlow Core</span></div><div class="bubble-box stream-target"><span style="color:#7E7566; font-style:italic;">Processing query...</span></div>`;
             container.appendChild(aiRow);
             scrollToBottom();
 
@@ -1027,7 +1031,7 @@ APP_TEMPLATE = """
                 });
 
             } catch (err) {
-                streamTarget.innerHTML = `<span style="color:#f43f5e;">Connection failed. Retry in a moment.</span>`;
+                streamTarget.innerHTML = `<span style="color:#E11D48;">Connection failed. Retry in a moment.</span>`;
             } finally {
                 sendBtn.disabled = false;
             }
