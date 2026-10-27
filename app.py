@@ -1128,17 +1128,31 @@ def generate():
     gemini_contents.append({"role": "user", "parts": [{"text": user_prompt}]})
 
     def generate_stream():
-        try:
-            response = client.models.generate_content_stream(
-                model="gemini-3.8-flash",
-                contents=gemini_contents,
-                config={"system_instruction": system_instruction}
-            )
-            for chunk in response:
-                if chunk.text:
-                    yield chunk.text
-        except Exception as e:
-            yield f"Error generating response: {str(e)}"
+        models_to_try = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
+        success = False
+
+        for model_name in models_to_try:
+            try:
+                response = client.models.generate_content_stream(
+                    model=model_name,
+                    contents=gemini_contents,
+                    config={"system_instruction": system_instruction}
+                )
+                for chunk in response:
+                    if chunk.text:
+                        yield chunk.text
+                success = True
+                break
+            except Exception as e:
+                err_text = str(e)
+                if "503" in err_text or "UNAVAILABLE" in err_text or "ResourceExhausted" in err_text:
+                    continue
+                else:
+                    yield f"Error generating response: {err_text}"
+                    return
+
+        if not success:
+            yield "AI service is currently under peak global traffic. Please retry in 5 seconds."
 
     return Response(generate_stream(), mimetype='text/plain')
 
