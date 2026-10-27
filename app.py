@@ -1,9 +1,9 @@
 from flask import Flask, render_template_string, request, Response, session, redirect, url_for, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from google import genai
+from google.genai import types
 import os
 import sqlite3
-import time
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'devflow_ultra_secure_key_2026')
@@ -213,7 +213,6 @@ APP_TEMPLATE = """
             overflow: hidden;
         }
 
-        /* Top Bar */
         header {
             height: 56px;
             padding: 0 24px;
@@ -310,7 +309,6 @@ APP_TEMPLATE = """
             background: rgba(239, 68, 68, 0.1);
         }
 
-        /* Workspace Grid */
         .workspace {
             display: flex;
             flex: 1;
@@ -318,7 +316,6 @@ APP_TEMPLATE = """
             overflow: hidden;
         }
 
-        /* Sidebar */
         aside {
             width: 280px;
             background: var(--bg-surface);
@@ -409,7 +406,6 @@ APP_TEMPLATE = """
         }
         .reminder-del:hover { color: var(--alarm-red); }
 
-        /* Main Scroll Area */
         main {
             flex: 1;
             display: flex;
@@ -476,7 +472,6 @@ APP_TEMPLATE = """
             color: #cbd5e1;
         }
 
-        /* Code Blocks & Copy Bar */
         .code-container {
             position: relative;
             margin: 14px 0;
@@ -519,7 +514,6 @@ APP_TEMPLATE = """
         code { font-family: 'JetBrains Mono', monospace; font-size: 13.5px; }
         p code { background: #161e30; color: #38bdf8; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
 
-        /* Floating Input Bar */
         .dock-bar {
             position: absolute;
             bottom: 0;
@@ -623,7 +617,6 @@ APP_TEMPLATE = """
         }
         @keyframes pulse-mic { from { opacity: 0.4; } to { opacity: 1; } }
 
-        /* Alarm Modal */
         .alarm-modal {
             display: none;
             position: fixed;
@@ -690,7 +683,6 @@ APP_TEMPLATE = """
     </header>
 
     <div class="workspace">
-        <!-- Sidebar Alarms -->
         <aside>
             <div class="sidebar-header">
                 <span>Alarms & Tasks</span>
@@ -703,12 +695,9 @@ APP_TEMPLATE = """
                 <button type="submit" class="btn-add-alarm">+ Set Alarm</button>
             </form>
 
-            <div class="reminders-list" id="reminders-list">
-                <!-- Dynamically loaded -->
-            </div>
+            <div class="reminders-list" id="reminders-list"></div>
         </aside>
 
-        <!-- Main Stream Workspace -->
         <main>
             <div class="chat-scroll" id="scroll-box">
                 <div class="feed-container" id="feed-container">
@@ -761,7 +750,6 @@ APP_TEMPLATE = """
         </main>
     </div>
 
-    <!-- Alarm Ring Modal -->
     <div class="alarm-modal" id="alarm-modal">
         <div class="alarm-box">
             <h3>⏰ ALARM RINGING</h3>
@@ -782,7 +770,6 @@ APP_TEMPLATE = """
         function scrollToBottom() { scrollBox.scrollTop = scrollBox.scrollHeight; }
         scrollToBottom();
 
-        // Enhance Code Blocks with Copy Feature
         function formatMarkdownAndCode(el) {
             el.innerHTML = marked.parse(el.textContent);
             el.querySelectorAll('pre code').forEach((block) => {
@@ -839,7 +826,6 @@ APP_TEMPLATE = """
             }
         });
 
-        // ---------------- STREAMING PIPELINE ---------------- //
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const text = promptInput.value.trim();
@@ -898,7 +884,6 @@ APP_TEMPLATE = """
             }
         });
 
-        // ---------------- WEB SPEECH API (VOICE TO TEXT) ---------------- //
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             const recognition = new SpeechRecognition();
@@ -926,7 +911,6 @@ APP_TEMPLATE = """
             micBtn.style.display = 'none';
         }
 
-        // ---------------- EXPORT CHAT (.MD) ---------------- //
         function exportChat() {
             let markdownContent = "# DevFlow AI - Session Transcript\\n\\n";
             document.querySelectorAll('.msg-row').forEach(row => {
@@ -942,7 +926,6 @@ APP_TEMPLATE = """
             link.click();
         }
 
-        // ---------------- ALARMS & AUDIO BUZZER ---------------- //
         let currentAlarmId = null;
         let audioCtx = null;
         let alarmLoop = null;
@@ -1129,29 +1112,20 @@ def generate():
     gemini_contents.append({"role": "user", "parts": [{"text": user_prompt}]})
 
     def generate_stream():
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                response = client.models.generate_content_stream(
-                    model="gemini-3.8-flash",
-                    contents=gemini_contents,
-                    config={"system_instruction": system_instruction}
-                )
-                for chunk in response:
-                    if chunk.text:
-                        yield chunk.text
-                return
-            except Exception as e:
-                err_text = str(e)
-                if ("503" in err_text or "UNAVAILABLE" in err_text or "ResourceExhausted" in err_text) and attempt < max_retries - 1:
-                    time.sleep(1.5)
-                    continue
-                else:
-                    if "503" in err_text or "UNAVAILABLE" in err_text:
-                        yield "AI servers are experiencing high peak load. Please try your prompt again in a moment."
-                    else:
-                        yield f"Error generating response: {err_text}"
-                    return
+        try:
+            gen_config = types.GenerateContentConfig(
+                system_instruction=system_instruction
+            )
+            response = client.models.generate_content_stream(
+                model="gemini-3.8-flash",
+                contents=gemini_contents,
+                config=gen_config
+            )
+            for chunk in response:
+                if chunk.text:
+                    yield chunk.text
+        except Exception as e:
+            yield f"Error: {str(e)}"
 
     return Response(generate_stream(), mimetype='text/plain')
 
