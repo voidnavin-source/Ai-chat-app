@@ -1112,20 +1112,45 @@ def generate():
     gemini_contents.append({"role": "user", "parts": [{"text": user_prompt}]})
 
     def generate_stream():
-        try:
-            gen_config = types.GenerateContentConfig(
-                system_instruction=system_instruction
-            )
-            response = client.models.generate_content_stream(
-                model="gemini-3.8-flash",
-                contents=gemini_contents,
-                config=gen_config
-            )
-            for chunk in response:
-                if chunk.text:
-                    yield chunk.text
-        except Exception as e:
-            yield f"Error: {str(e)}"
+        # Fallback list: agar ek model 503 high demand par ho, turant doosre se stream karega
+        models_to_try = [
+            "gemini-flash-latest",
+            "gemini-3.5-flash",
+            "gemini-3.1-flash-lite",
+            "gemini-3.8-flash"
+        ]
+        
+        gen_config = types.GenerateContentConfig(
+            system_instruction=system_instruction
+        )
+
+        streamed_anything = False
+
+        for model_name in models_to_try:
+            try:
+                response = client.models.generate_content_stream(
+                    model=model_name,
+                    contents=gemini_contents,
+                    config=gen_config
+                )
+                for chunk in response:
+                    if chunk.text:
+                        streamed_anything = True
+                        yield chunk.text
+                
+                if streamed_anything:
+                    return  # Successfully generated and streamed
+            except Exception as e:
+                err_text = str(e)
+                # Agar capacity, load, ya 503 error hai, silently agle model par jump karega
+                if any(k in err_text for k in ["503", "UNAVAILABLE", "ResourceExhausted", "429", "404"]):
+                    continue
+                else:
+                    yield f"Error: {err_text}"
+                    return
+
+        if not streamed_anything:
+            yield "All models are currently facing traffic spikes. Please retry your message in 5 seconds."
 
     return Response(generate_stream(), mimetype='text/plain')
 
